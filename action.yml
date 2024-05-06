@@ -23,6 +23,11 @@ outputs:
   terraform_version:
     description: Version of Terraform that was used in this run
     value: ${{ inputs.terraform_version }}
+
+defaults:
+  run:
+    working-directory: ${{ inputs.working_directory }}
+
 runs:
   using: composite
   steps:
@@ -40,25 +45,26 @@ runs:
       id: configurations
       shell: bash
       run: |
-        cd ${{ inputs.working_directory }}
         echo "node_version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
 
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ steps.configurations.outputs.node_version }}
         cache: npm
-        cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
 
     - name: Install Node Dependencies
       shell: bash
       run: |
-        cd ${{ inputs.working_directory }}
         npm ci
+
+    - uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
     - name: Synthesize Stacks
       id: synth
       shell: bash
       run: |
-        cd ${{ inputs.working_directory }}
         npx cdktf synth
         echo "stacks=$(jq --compact-output --null-input '$ARGS.positional' --args -- $(ls cdktf.out/stacks))" >> $GITHUB_OUTPUT
