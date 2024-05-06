@@ -49,17 +49,17 @@ runs:
         cache: npm
         cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
 
-    - name: Install Node Dependencies
-      shell: bash
-      run: |
-        cd ${{ inputs.working_directory }}
-        npm ci
-
     - uses: actions/cache@v4
       with:
         path: |
           ${{ inputs.working_directory }}/node_modules
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install Node Dependencies
+      shell: bash
+      run: |
+        cd ${{ inputs.working_directory }}
+        npm ci
 
     - name: Synthesize Stacks
       id: synth
