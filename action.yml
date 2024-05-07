@@ -36,14 +36,6 @@ runs:
       working-directory: ${{ inputs.working_directory }}
       run: echo "node_version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
 
-    - name: DEBUGGING
-      env:
-        GITHUB_WORKSPACE: ${{ inputs.working_directory }}
-      run: |
-        echo "#### !!!! DIRECTORIES !!!! ####"
-        pwd
-        ls -lah
-
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ steps.configurations.outputs.node_version }}
@@ -55,7 +47,7 @@ runs:
         GITHUB_WORKSPACE: ${{ inputs.working_directory }}
       with:
         path: ${{ inputs.working_directory }}/node_modules
-        key: npm-cache-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        key: npm-cache-${{ runner.os }}-${{ hashFiles('${{ inputs.working_directory }}/package-lock.json') }}
 
     - name: Install Node Dependencies
       shell: bash
