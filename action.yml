@@ -37,17 +37,17 @@ runs:
       run: echo "node_version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
 
     - uses: actions/setup-node@v4
+      working-directory: ${{ inputs.working_directory }}
       with:
         node-version: ${{ steps.configurations.outputs.node_version }}
         cache: npm
-        cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
+        cache-dependency-path: package-lock.json
 
     - uses: actions/cache@v4
-      env:
-        GITHUB_WORKSPACE: ${{ inputs.working_directory }}
+      working-directory: ${{ inputs.working_directory }}
       with:
-        path: ${{ inputs.working_directory }}/node_modules
-        key: npm-cache-${{ runner.os }}-${{ hashFiles('cdktf/package-lock.json') }}
+        path: node_modules
+        key: npm-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
     - name: Install Node Dependencies
       shell: bash
