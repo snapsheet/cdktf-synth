@@ -1,3 +1,3 @@
 # CDKTF Synth
 
-Synthesize CDKTF stacks in order to deploy infrastructure as code. This project is for demonstration purposes only.
+Synthesize CDKTF stacks in order to deploy infrastructure as code.
