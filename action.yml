@@ -36,25 +36,17 @@ runs:
       working-directory: ${{ inputs.working_directory }}
       run: |
         echo "node_version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
-        echo "npm_cache_path=${{ inputs.working_directory }}/package-lock.json" >> $GITHUB_OUTPUT
 
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ steps.configurations.outputs.node_version }}
         cache: npm
-        cache-dependency-path: ${{ steps.configurations.outputs.npm_cache_path }}
-
-    - uses: actions/cache@v4
-      env:
-        GITHUB_WORKSPACE: ${{ inputs.working_directory }}
-      with:
-        path: ${{ inputs.working_directory }}/node_modules
-        key: npm-cache-${{ runner.os }}-${{ hashFiles(steps.configurations.outputs.npm_cache_path) }}
+        cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
 
     - name: Install Node Dependencies
       shell: bash
       working-directory: ${{ inputs.working_directory }}
-      run: npm install
+      run: npm ci
 
     - name: Synthesize Stacks
       id: synth
