@@ -20,9 +20,9 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: ${{ inputs.terraform_version }}
+    # - uses: hashicorp/setup-terraform@v3
+    #   with:
+    #     terraform_version: ${{ inputs.terraform_version }}
 
     - uses: actions/checkout@v4
       id: checkout
