@@ -1,0 +1,57 @@
+name: cdktf-synth
+description: Synthesize CDKTF stacks in order to deploy infrastructure as code. This project is for demonstration purposes only.
+inputs:
+  ref:
+    description: Branch/Commit/Tag to use
+    default: main
+    type: string
+  terraform_version:
+    description: The version of Terraform to use
+    default: 1.8.0
+    required: false
+  working_directory:
+    description: Working directory path that contains your cdktf code.
+    default: ./
+    required: false
+outputs:
+  stacks:
+    description: JSON array of strings, containing the names of the CDKTF stacks that were synthesized.
+    value: ${{ steps.synth.outputs.stacks }}
+runs:
+  using: composite
+  steps:
+    - uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ inputs.terraform_version }}
+
+    - uses: actions/checkout@v4
+      id: checkout
+      with:
+        fetch-depth: 0
+        ref: ${{ inputs.ref }}
+
+    - name: Load Configuration
+      id: configurations
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        echo "node_version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ steps.configurations.outputs.node_version }}
+        cache: npm
+        cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
+
+    - name: Install Node Dependencies
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: npm ci
+
+    - name: Synthesize Stacks
+      id: synth
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        npx cdktf synth
+        echo "stacks=$(jq --compact-output --null-input '$ARGS.positional' --args -- $(ls cdktf.out/stacks))" >> $GITHUB_OUTPUT
