@@ -36,11 +36,6 @@ runs:
       working-directory: ${{ inputs.working_directory }}
       run: echo "node_version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
 
-    - run: |
-        echo "#### $$$$ DIRECTORIES $$$$ ####"
-        pwd
-        ls -lah
-
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ steps.configurations.outputs.node_version }}
@@ -48,6 +43,8 @@ runs:
         cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
 
     - uses: actions/cache@v4
+      env:
+        GITHUB_WORKSPACE: ${{ inputs.working_directory }}
       with:
         path: ${{ inputs.working_directory }}/node_modules
         key: npm-cache-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
