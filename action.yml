@@ -32,6 +32,9 @@ outputs:
   stacks:
     description: JSON array of strings, containing the names of the CDKTF stacks that were synthesized.
     value: ${{ steps.synth.outputs.stacks }}
+  job_id:
+    description: ID of this job
+    value: ${{ steps.jobid_action.outputs.job_id }}
 
 runs:
   using: composite
