@@ -2,11 +2,9 @@ name: cdktf-synth
 description: Synthesize CDKTF stacks in order to deploy infrastructure as code. This project is for demonstration purposes only.
 inputs:
   github_token:
-    description: GITHUB_TOKEN to use GitHub API. Simply specify `secrets.GITHUB_TOKEN`.
-    required: true
+    description: GITHUB_TOKEN to use GitHub API. Simply specify `secrets.GITHUB_TOKEN`. This is required if you wish to save assets.
   job_name:
-    description: jobs.<job-id>.name of this workflow job. This is needed to get the job ID via query.
-    required: true
+    description: jobs.<job-id>.name of this workflow job. This is required if you wish to save assets.
   ref:
     description: Branch/Commit/Tag to use
     default: main
@@ -40,6 +38,7 @@ runs:
   using: composite
   steps:
     - id: jobid_action
+      if: ${{ inputs.save == 'true' }}
       uses: Tiryoh/gha-jobid-action@v1
       with:
         github_token: ${{ inputs.GITHUB_TOKEN }}
