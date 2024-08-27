@@ -8,17 +8,17 @@ inputs:
     description: jobs.<job-id>.name of this workflow job. This is needed to get the job ID via query.
     required: true
   ref:
-    default: main
     description: Branch/Commit/Tag to use
+    default: main
     type: string
   terraform_version:
-    default: 1.8.0
     description: The version of Terraform to use
-    type: string
+    default: 1.8.0
+    required: false
   working_directory:
-    default: ./
     description: Working directory path that contains your cdktf code.
-    type: string
+    default: ./
+    required: false
   output:
     default: cdktf.out
     description: Output directory for the synthesized Terraform config
